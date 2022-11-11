@@ -39,6 +39,15 @@ namespace XmLHandler
 
             return result;
         }
+
+        /*
+         * Возможен возврат null
+         * Не были проведены проверки входных параметров(возможен null или пустые строки. некоректная строка пути, отсутствие файла)
+         * Можно уменьшить диапозон поиска
+         * Создание множества строк в памяти
+         * Возможен выход за диапозон массива
+         * Текст файла возможен в неподходящей кодировке
+         */
         
 
         /// <summary>
@@ -49,7 +58,7 @@ namespace XmLHandler
         {
             Checking(input, elementName, attrName);
             
-            string result = String.Empty;
+            var result = new StringBuilder();
             string[] lines = System.IO.File.ReadAllLines(input, Encoding.UTF8);
             var elementStart = "<" + elementName;
             foreach (var line in lines)
@@ -65,17 +74,17 @@ namespace XmLHandler
                 if (attrStartIndex != -1)
                 {
                     int valueStartIndex = attrStartIndex + attrName.Length + 2;
-                    while (line[valueStartIndex] != '"')
+                    while (line[valueStartIndex] != '"' || valueStartIndex < endEllementIndex)
                     {
-                        result += line[valueStartIndex];
+                        result.Append(line[valueStartIndex]);
                         valueStartIndex++;
                     }
+
                     break;
                 }
             }
             
-            return result;
-            
+            return  result.ToString();
         }
 
        
